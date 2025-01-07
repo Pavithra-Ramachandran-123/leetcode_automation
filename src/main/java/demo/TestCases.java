@@ -1,18 +1,26 @@
 package demo;
 
-import java.util.concurrent.TimeUnit;
+import java.time.Duration;
+import java.util.List;
+import java.util.logging.Level;
 
+import org.openqa.selenium.By;
+import org.openqa.selenium.WebElement;
 import org.openqa.selenium.chrome.ChromeDriver;
 import org.openqa.selenium.chrome.ChromeDriverService;
 import org.openqa.selenium.chrome.ChromeOptions;
 import org.openqa.selenium.logging.LogType;
 import org.openqa.selenium.logging.LoggingPreferences;
-import java.util.logging.Level;
+import org.openqa.selenium.support.ui.ExpectedConditions;
+import org.openqa.selenium.support.ui.WebDriverWait;
+
+import dev.failsafe.internal.util.Assert;
 import io.github.bonigarcia.wdm.WebDriverManager;
 
 
 public class TestCases {
     ChromeDriver driver;
+    WebDriverWait wait;
     public TestCases()
     {
         System.out.println("Constructor: TestCases");
@@ -33,8 +41,9 @@ public class TestCases {
 
         // Set browser to maximize and wait
         driver.manage().window().maximize();
-        driver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
+        driver.manage().timeouts().implicitlyWait(Duration.ofSeconds(30));
 
+        wait=new WebDriverWait(driver,Duration.ofSeconds(10));
     }
 
     public void endTest()
@@ -45,12 +54,42 @@ public class TestCases {
 
     }
 
-    
-    public  void testCase01(){
+    public void testCase01(){
         System.out.println("Start Test case: testCase01");
-        driver.get("https://www.google.com");
-        System.out.println("end Test case: testCase02");
+        driver.get("https://leetcode.com/");
+        Assert.isTrue(driver.getCurrentUrl().contains("leetcode"), "url is wrong");
+        System.out.println("end Test case: testCase01\n");
     }
+
+    public void testCase02(){
+        System.out.println("Start Test case: testCase02");
+        WebElement viewQuestions= wait.until(ExpectedConditions.visibilityOfElementLocated(By.xpath("//p[contains(text(),'View Questions')]")));
+        viewQuestions.click();
+        wait.until(ExpectedConditions.urlContains("problemset"));
+        Assert.isTrue(driver.getCurrentUrl().contains("problemset"), "url doesnt contain problemset");
+        List<WebElement> questions=wait.until(ExpectedConditions.visibilityOfAllElementsLocatedBy(By.xpath("//div[@role='row']")));
+        for(int i=2;i<=6;i++){
+            System.out.println(questions.get(i).getText());
+        }
+        System.out.println("end Test case: testCase02\n");
+    }
+
+    public void testCase03(){
+        System.out.println("Start Test case: testCase03");
+        WebElement twoSum=driver.findElement(By.partialLinkText("Two Sum"));
+        twoSum.click();
+        Assert.isTrue(driver.getCurrentUrl().contains("description"), "url doesnt render problem page");
+        System.out.println("end Test case: testCase03\n");
+    }
+
+    public void testCase04(){
+        System.out.println("Start Test case: testCase04");
+        WebElement loginOrSignup=wait.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText("Login / Sign up")));
+        // Actions actions=new Actions(driver);
+        // actions.moveToElement(submit).perform();
+        Assert.isTrue(loginOrSignup.isDisplayed(), "Login/Sign up message doesnt show up");
+        System.out.println("end Test case: testCase04\n");
+    }    
 
 
 }
