@@ -84,10 +84,12 @@ public class TestCases {
 
     public void testCase04(){
         System.out.println("Start Test case: testCase04");
-        WebElement loginOrSignup=wait.until(ExpectedConditions.visibilityOfElementLocated(By.partialLinkText("Login / Sign up")));
+        WebElement submissionsTab=wait.until(ExpectedConditions.presenceOfElementLocated(By.xpath("//*[@id=\"submissions_tab\"]/div[2]/div[2]")));
+        submissionsTab.click();
+        WebElement registerOrSignup=wait.until(ExpectedConditions.presenceOfElementLocated(By.partialLinkText("Register or Sign In")));
         // Actions actions=new Actions(driver);
         // actions.moveToElement(submit).perform();
-        Assert.isTrue(loginOrSignup.isDisplayed(), "Login/Sign up message doesnt show up");
+        Assert.isTrue(registerOrSignup.getText().contains("Register or Sign In"), "Register or Sign In up message doesnt show up");
         System.out.println("end Test case: testCase04\n");
     }    
 
